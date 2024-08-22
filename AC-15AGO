@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Figuras Geométricas</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background-color: #ADD8E6; /* Azul pastel */
+            text-align: center;
+            padding: 20px;
+        }
+        #preview {
+            border: 1px solid #000;
+            margin: 20px auto;
+            background-color: #ffffff;
+        }
+        select, input {
+            margin: 10px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Generador de Figuras Geométricas</h1>
+    <div>
+        <label for="figureSelect">Selecciona una figura:</label>
+        <select id="figureSelect">
+            <option value="circle">Círculo</option>
+            <option value="triangle">Triángulo</option>
+            <option value="square">Cuadrado</option>
+            <option value="pentagon">Pentágono</option>
+            <option value="star">Estrella</option>
+            <option value="rhombus">Rombo</option>
+            <option value="parallelepiped">Paralelepípedo</option>
+        </select>
+    </div>
+    <div>
+        <label for="renderType">Tipo de renderización:</label>
+        <select id="renderType">
+            <option value="raster">Rasterizada</option>
+            <option value="vector">Vectorizada</option>
+        </select>
+    </div>
+    <div>
+        <label for="width">Ancho:</label>
+        <input type="number" id="width" placeholder="Ancho" />
+        <label for="height">Altura:</label>
+        <input type="number" id="height" placeholder="Altura" />
+    </div>
+    <div>
+        <label for="colorFill">Color de relleno:</label>
+        <input type="color" id="colorFill" value="#ff0000" />
+        <label for="colorBorder">Color del borde:</label>
+        <input type="color" id="colorBorder" value="#000000" />
+    </div>
+    <button onclick="drawFigure()">Dibujar Figura</button>
+    <div id="preview"></div>
 
+    <script>
+        function drawFigure() {
+            const figureType = document.getElementById('figureSelect').value;
+            const renderType = document.getElementById('renderType').value;
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+            const colorFill = document.getElementById('colorFill').value;
+            const colorBorder = document.getElementById('colorBorder').value;
+            
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 400;
+            canvas.height = 400;
+            preview.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = colorFill;
+            ctx.strokeStyle = colorBorder;
+            ctx.lineWidth = 2;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            switch (figureType) {
+                case 'circle':
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, Math.min(width, height) / 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'triangle':
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY - height / 2);
+                    ctx.lineTo(centerX - width / 2, centerY + height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY + height / 2);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'square':
+                    ctx.beginPath();
+                    ctx.rect(centerX - width / 2, centerY - height / 2, width, height);
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'pentagon':
+                    const radius = Math.min(width, height) / 2;
+                    const angle = 2 * Math.PI / 5;
+                    ctx.beginPath();
+                    for (let i = 0; i < 5; i++) {
+                        ctx.lineTo(centerX + radius * Math.cos(angle * i), centerY - radius * Math.sin(angle * i));
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'star':
+                    const starRadius = Math.min(width, height) / 2;
+                    const starInnerRadius = starRadius / 2;
+                    ctx.beginPath();
+                    for (let i = 0; i < 10; i++) {
+                        const r = i % 2 === 0 ? starRadius : starInnerRadius;
+                        const x = centerX + r * Math.cos(i * Math.PI / 5);
+                        const y = centerY - r * Math.sin(i * Math.PI / 5);
+                        ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'rhombus':
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY - height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY);
+                    ctx.lineTo(centerX, centerY + height / 2);
+                    ctx.lineTo(centerX - width / 2, centerY);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    break;
+                case 'parallelepiped':
+                    ctx.beginPath();
+                    ctx.moveTo(centerX - width / 2, centerY - height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY - height / 2);
+                    ctx.lineTo(centerX + width / 2, centerY + height / 2);
+                    ctx.lineTo(centerX - width / 2, centerY + height / 2);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                default:
+                    alert('Figura no soportada.');
+            }
+        }
+    </script>
+</body>
+</html>
