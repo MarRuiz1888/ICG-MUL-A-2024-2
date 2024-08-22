@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trazado de polígonos regulares</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            color: #003366; /* Azul oscuro */
+        }
+        .controls {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .controls label {
+            margin-right: 10px;
+        }
+        .controls input {
+            margin: 0 10px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .controls button {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff; /* Azul */
+            color: white;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        .controls button:hover {
+            background-color: #0056b3; /* Azul oscuro */
+        }
+        canvas {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+        .vertex-info {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .vertex-info span {
+            display: block;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trazado de polígonos regulares</h1>
+    <div class="controls">
+        <label for="numSides">Número de lados:</label>
+        <input type="number" id="numSides" min="3" value="5">
+        <label for="polySize">Tamaño:</label>
+        <input type="number" id="polySize" min="50" value="100">
+        <button onclick="drawPolygon()">Dibujar</button>
+        <button onclick="resetCanvas()">Borrar</button>
+    </div>
+    <canvas id="polygonCanvas" width="500" height="500"></canvas>
+    <div id="vertexInfo" class="vertex-info"></div>
+
+    <script>
+        function drawPolygon() {
+    const canvas = document.getElementById('polygonCanvas');
+    const ctx = canvas.getContext('2d');
+    const numSides = parseInt(document.getElementById('numSides').value, 10);
+    const size = parseInt(document.getElementById('polySize').value, 10);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const radius = size / 2;
+    const step = (2 * Math.PI) / numSides;
+
+    // Ajuste del ángulo inicial para asegurar que la base sea horizontal
+    let startAngle = Math.PI / numSides + Math.PI / 2; 
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+    for (let i = 0; i < numSides; i++) {
+        const x = cx + radius * Math.cos(startAngle + i * step);
+        const y = cy + radius * Math.sin(startAngle + i * step);
+
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'blue';
+    ctx.stroke();
+
+
+            // Agregar la información de los vértices al div
+            let vertexHtml = '';
+            for (let i = 0; i < numSides; i++) {
+                const x = cx + radius * Math.cos(startAngle + i * step);
+                const y = cy + radius * Math.sin(startAngle + i * step);
+                vertexHtml += `<span>Vert ${i + 1}: (${x.toFixed(2)}, ${y.toFixed(2)})</span>`;
+            }
+            vertexInfo.innerHTML = vertexHtml;
+        }
+
+        function resetCanvas() {
+            const canvas = document.getElementById('polygonCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+            document.getElementById('vertexInfo').innerHTML = ''; // Limpiar la información de los vértices
+            document.getElementById('numSides').value = '5'; // Restablecer valor por defecto
+            document.getElementById('polySize').value = '100'; // Restablecer valor por defecto
+        }
+    </script>
+</body>
+</html>
