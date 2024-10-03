@@ -104,3 +104,42 @@ function toggleCentroide() {
         svg.appendChild(circulo);
     }
 }
+
+document.getElementById('toggleCentroide').addEventListener('click', toggleCentroide);
+
+function Convexo() {
+    let Positivo = false;
+    let Negativo = false;
+
+    for (let i = 0; i < puntos.length; i++) {
+        const puntoAnter = puntos[i === 0 ? puntos.length - 1 : i - 1];
+        const puntoActual = puntos[i];
+        const puntoSiguiente = puntos[(i + 1) % puntos.length];
+
+        const dx1 = puntoActual.getX() - puntoAnter.getX();
+        const dy1 = puntoActual.getY() - puntoAnter.getY();
+        const dx2 = puntoSiguiente.getX() - puntoActual.getX();
+        const dy2 = puntoSiguiente.getY() - puntoActual.getY();
+
+        const Productocruz = dx1 * dy2 - dy1 * dx2;
+        if (Productocruz > 0) Positivo = true;
+        if (Productocruz < 0) Negativo = true;
+
+        if (Positivo && Negativo) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function mostrarTipo() {
+    const tipoPoligono = Convexo() ? "El polígono es convexo" : "El polígono es cóncavo";
+    document.getElementById('infoTipoPoligono').textContent = tipoPoligono;
+}
+
+window.onload = function() {
+    PuntosAleatorios(6);
+    CruceLineas();
+    Dibujar();
+    mostrarTipo();
+};
